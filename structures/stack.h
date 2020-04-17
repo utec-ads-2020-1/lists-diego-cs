@@ -1,7 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
-using namespace std;
+#include <iostream>
+#include <exception>
 
 #define MAX 1000 
 
@@ -17,11 +18,68 @@ public:
 	~stack();   		
 
 	void push(T);
-	int pop();
-	int top();
+	void pop();
+	T peak();
 
 	int size();
 	bool empty();
 };
+
+template <typename T>
+stack<T>::stack(int size) {
+	top = -1;
+	capacity = size;
+	data = new T[capacity];
+}
+
+template <typename T>
+stack<T>::~stack() {
+	delete[] data;
+}
+
+template <typename T>
+void stack<T>::push(T item) {
+	if (top == capacity - 1) {
+		capacity *= 2;
+		T* temp = new T[capacity];
+		for (int i = 0; i < size(); ++i) {
+			temp[i] = data[i];
+		}
+		delete[] data;
+		data = temp;
+
+		data[++top] = item;
+	} else {
+		data[++top] = item;
+	}
+}
+
+template <typename T>
+void stack<T>::pop() {
+	if (!empty()) {
+		std::cout << "\t" << data[top--] << std::endl;
+	} else {
+		std::cout << "Empty stack." << std::endl;
+	}
+}
+
+template <typename T>
+T stack<T>::peak() {
+	if (!empty()) {
+		return data[top];
+	} else {
+		throw std::logic_error("Empty stack. There's no top item.");
+	}
+}
+
+template <typename T>
+int stack<T>::size() {
+	return top + 1;
+}
+
+template <typename T>
+bool stack<T>::empty() {
+	return top == -1;
+}
 
 #endif
