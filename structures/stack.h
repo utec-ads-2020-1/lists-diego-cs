@@ -23,6 +23,7 @@ public:
 
 	int size();
 	bool empty();
+	void resize();
 };
 
 template <typename T>
@@ -40,24 +41,16 @@ stack<T>::~stack() {
 template <typename T>
 void stack<T>::push(T element) {
 	if (top == capacity - 1) {
-		capacity *= 2;
-		T* temp = new T[capacity];
-		for (int i = 0; i < size(); ++i) {
-			temp[i] = data[i];
-		}
-		delete[] data;
-		data = temp;
-
-		data[++top] = element;
-	} else {
-		data[++top] = element;
+		resize();
 	}
+	data[++top] = element;
 }
 
 template <typename T>
 void stack<T>::pop() {
 	if (!empty()) {
-		std::cout << "\t" << data[top--] << std::endl;
+		std::cout << "\t" << data[top] << std::endl;
+		data[top--] = data[top + 2];
 	} else {
 		std::cout << "Empty stack." << std::endl;
 	}
@@ -68,7 +61,7 @@ T stack<T>::peak() {
 	if (!empty()) {
 		return data[top];
 	} else {
-		throw std::logic_error("Empty stack. There's no top element.");
+		throw std::out_of_range("Empty stack. There's no top element.");
 	}
 }
 
@@ -80,6 +73,17 @@ int stack<T>::size() {
 template <typename T>
 bool stack<T>::empty() {
 	return top == -1;
+}
+
+template <typename T>
+void stack<T>::resize() {
+	capacity *= 2;
+	T* temp = new T[capacity];
+	for (int i = 0; i < size(); ++i) {
+		temp[i] = data[i];
+	}
+	delete[] data;
+	data = temp;
 }
 
 #endif
