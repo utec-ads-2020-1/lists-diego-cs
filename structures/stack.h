@@ -38,7 +38,7 @@ stack<T>::~stack() {
 }
 
 template <typename T>
-void stack<T>::push(T item) {
+void stack<T>::push(T element) {
 	if (top == capacity - 1) {
 		capacity *= 2;
 		T* temp = new T[capacity];
@@ -48,9 +48,9 @@ void stack<T>::push(T item) {
 		delete[] data;
 		data = temp;
 
-		data[++top] = item;
+		data[++top] = element;
 	} else {
-		data[++top] = item;
+		data[++top] = element;
 	}
 }
 
@@ -68,7 +68,7 @@ T stack<T>::peak() {
 	if (!empty()) {
 		return data[top];
 	} else {
-		throw std::logic_error("Empty stack. There's no top item.");
+		throw std::logic_error("Empty stack. There's no top element.");
 	}
 }
 
