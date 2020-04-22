@@ -27,16 +27,10 @@ public:
 };
 
 template <typename T>
-stack<T>::stack(int size) {
-	top = -1;
-	capacity = size;
-	data = new T[capacity];
-}
+stack<T>::stack(int size) : top(-1), capacity(size), data(new T[capacity]) {}
 
 template <typename T>
-stack<T>::~stack() {
-	delete[] data;
-}
+stack<T>::~stack() { delete[] data; }
 
 template <typename T>
 void stack<T>::push(T element) {
