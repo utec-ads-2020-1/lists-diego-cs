@@ -13,13 +13,13 @@ class queue {
 	int capacity;
 
 public:
-	stack(int size = MAX);
-	~stack();   		
+	queue(int size = MAX);
+	~queue();   		
 
 	void push(T);
-	int pop();
-	int front();
-    int back();
+	void pop();
+	T front();
+    T back();
 
 	int size();
 	bool empty();
