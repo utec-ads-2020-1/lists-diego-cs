@@ -25,16 +25,10 @@ public:
 };
 
 template <typename T>
-queue<T>::queue(int size) {
-	top = -1;
-	capacity = size;
-	data = new T[capacity];
-}
+queue<T>::queue(int size) : top(-1), capacity(size), data(new T[capacity]) {}
 
 template <typename T>
-queue<T>::~queue() {
-	delete[] data;
-}
+queue<T>::~queue() { delete[] data; }
 
 template <typename T>
 void queue<T>::push(T element) {
