@@ -10,4 +10,12 @@ struct Node {
     void killSelf();
 };
 
+template <typename T>
+void Node<T>::killSelf() {
+    if (this->next) {
+        next->killSelf();
+    }
+    delete this;
+}
+
 #endif
