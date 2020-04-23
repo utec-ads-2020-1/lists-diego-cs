@@ -2,6 +2,7 @@
 #define LIST_H
 
 #include "node.h"
+#include "../../sort/mergesort.hpp"
 
 // TODO: Implement all methods
 template <typename T>
