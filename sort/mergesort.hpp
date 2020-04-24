@@ -1,16 +1,16 @@
 #ifndef MERGESORT_HPP
 #define MERGESORT_HPP
 
-#include "lists/node.h"
+#include "../structures/lists/node.h"
 
 /* Split the nodes of the given list into front and back halves,  
     and return the two lists using the reference parameters.  
     If the length is odd, the extra node should go in the front list.  
     Uses the fast/slow pointer strategy. */
 template <typename T>
-void front_back_split(Node<T>* node, Node<T> front_ref, Node<T> back_ref) {
-    auto slow = node;
-    auto fast = node->next;
+void front_back_split(Node<T>* node, Node<T>*& front_ref, Node<T>*& back_ref) {
+    Node<T>* slow = node;
+    Node<T>* fast = node->next;
 
     /* Advance 'fast' two nodes, and advance 'slow' one node */
     while (fast != nullptr) {
@@ -29,8 +29,8 @@ void front_back_split(Node<T>* node, Node<T> front_ref, Node<T> back_ref) {
 
 /* sorts the linked list by changing next pointers (not data) */
 template <typename T>
-void merge_sort(Node<T> head_ref) {
-    auto head = head_ref;
+void merge_sort(Node<T>*& head_ref) {
+    Node<T>* head = head_ref;
     Node<T>* a;
     Node<T>* b;
 
@@ -47,12 +47,12 @@ void merge_sort(Node<T> head_ref) {
     merge_sort(b); 
   
     /* answer = merge the two sorted lists together */
-    headRef = sorted_merge(a, b); 
+    head_ref = sorted_merge(a, b); 
 }
 
 template <typename T>
-Node<T>* sorted_merge(Node<T> a, Node<T> b) {
-    auto result = nullptr;
+Node<T>* sorted_merge(Node<T>*& a, Node<T>*& b) {
+    Node<T>* result = nullptr;
 
     /* Base cases */
     if (a == nullptr) return b;
