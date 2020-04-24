@@ -3,6 +3,7 @@
 
 #include "node.h"
 #include "../../sort/mergesort.hpp"
+#include <string>
 
 // TODO: Implement all methods
 template <typename T>
@@ -28,7 +29,7 @@ class List {
         virtual void clear() = 0;
         virtual void sort() = 0;
         virtual void reverse() = 0;
-        virtual string name() = 0;
+        virtual std::string name() = 0;
 };
 
 #endif
