@@ -2,6 +2,9 @@
 #define FORWARD_ITERATOR_H
 
 #include "../node.h"
+#include <iostream>
+
+using namespace std;
 
 // TODO: Implement all methods
 template <typename T> 
@@ -23,10 +26,10 @@ class ForwardIterator {
 };
 
 template <typename T>
-ForwardIterator<T>::ForwardIterator<T>() : this->current(nullptr) {}
+ForwardIterator<T>::ForwardIterator() : current(nullptr) {}
 
 template <typename T>
-ForwardIterator<T>::ForwardIterator<T>(Node<T>* head) : this->current(head) {}
+ForwardIterator<T>::ForwardIterator(Node<T>* head) : current(head) {}
 
 template <typename T>
 ForwardIterator<T> ForwardIterator<T>::operator=(ForwardIterator<T> it2) {
@@ -45,13 +48,17 @@ ForwardIterator<T> ForwardIterator<T>::operator++() {
         throw out_of_range("There's no next node.");
     } else {
         this->current = this->current->next;
-        return this;
+        return this->current;
     }
 }
 
 template <typename T>
 T ForwardIterator<T>::operator*() {
-    return this->current->data;
+    if (!this->current) {
+        throw out_of_range("There's no content.");
+    } else {
+        return this->current->data;
+    }
 }
 
 #endif
