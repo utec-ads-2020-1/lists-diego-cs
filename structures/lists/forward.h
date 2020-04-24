@@ -46,7 +46,12 @@ template <typename T>
 ForwardList<T>::ForwardList() : List<T>() {}
 
 template <typename T>
-ForwardList<T>::~ForwardList() {}
+ForwardList<T>::~ForwardList() {
+    this->head->killSelf();
+    this->nodes = 0;
+    delete this->head;
+    delete this->tail;
+}
 
 template <typename T>
 T ForwardList<T>::front() {
@@ -68,9 +73,7 @@ T ForwardList<T>::back() {
 
 template <typename T>
 void ForwardList<T>::push_front(T data) {
-    auto new_node = new Node<T>();
-    new_node->data = data;
-    new_node->next = nullptr;
+    auto new_node = new Node<T>(data);
 
     if (!this->head) {
         this->head = this->tail = new_node;
@@ -78,14 +81,12 @@ void ForwardList<T>::push_front(T data) {
         new_node->next = this->head;
         this->head = new_node;
     }
-    ++nodes;
+    ++this->nodes;
 }
 
 template <typename T>
 void ForwardList<T>::push_back(T data) {
-    auto new_node = new Node<T>();
-    new_node->data = data;
-    new_node->next = nullptr;
+    auto new_node = new Node<T>(data);
 
     if (!this->tail) {
         this->head = this->tail = new_node;
@@ -93,7 +94,7 @@ void ForwardList<T>::push_back(T data) {
         this->tail->next = new_node;
         this->tail = new_node;
     }
-    ++nodes;
+    ++this->nodes;
 }
 
 template <typename T>
@@ -101,34 +102,47 @@ void ForwardList<T>::pop_front() {
     if (!this->head) {
         cout << "Cannot pop front. Empty forward list." << endl;
     } else {
-        auto temp = this->head;
-        this->head = this->head->next;
-        delete temp;
-        --nodes;
+        if (this->nodes == 1) {
+            auto temp = this->head;
+            this->head = this->tail = nullptr;
+            delete temp;
+        } else {
+            auto temp = this->head;
+            this->head = this->head->next;
+            delete temp;    
+        }
+        --this->nodes;
     }
 }
 
 template <typename T>
 void ForwardList<T>::pop_back() {
-    if (!this->head) {
+    if (!this->tail) {
         cout << "Cannot pop back. Empty forward list." << endl;
     } else {
-        auto temp = head;
-        while (temp->next != this->tail) {
+        if (this->nodes == 1) {
+            auto temp = this->tail;
+            this->tail = this->head = nullptr;
+            delete temp;
+        } else {
+            auto temp = this->head;
+            while (temp->next != this->tail) {
+                temp = temp->next;
+            }
+            temp->next = this->tail->next;
+            this->tail = temp;
             temp = temp->next;
+            delete temp;
         }
-        this->tail = temp;
-        temp = temp->next;
-        delete temp;
-        --nodes;
-    }
+        --this->nodes;
+    } 
 }
 
 template <typename T>
 T ForwardList<T>::operator[](int index) {
-    if (index < 0 || index >= nodes) {
+    if (index < 0 || index >= this->nodes) {
         throw out_of_range("Invalid index");
-    } else if (index == nodes - 1) {
+    } else if (index == this->nodes - 1) {
         return this->tail->data;
     } else {
         auto temp = this->head;
@@ -141,12 +155,12 @@ T ForwardList<T>::operator[](int index) {
 
 template <typename T>
 bool ForwardList<T>::empty() {
-    return nodes == 0;
+    return !this->head;
 }
 
 template <typename T>
 int ForwardList<T>::size() {
-    return nodes;
+    return this->nodes;
 }
 
 template <typename T>
@@ -155,6 +169,8 @@ void ForwardList<T>::clear() {
         cout << "Forward list is already empty." << endl;
     } else {
         this->head->killSelf();
+        this->head = this->tail = nullptr;
+        this->nodes = 0;
     }
 }
 
@@ -165,7 +181,11 @@ void ForwardList<T>::sort() {
     } else if (size() == 1) {
         cout << "Cannot sort. There's only one element." << endl;
     } else {
-        merge_sort(this->head); //
+        merge_sort(this->head);
+        this->tail = this->head;
+        while(this->tail->next != nullptr){
+            this->tail = this->tail->next;
+        }
     }
 }
 
@@ -176,15 +196,13 @@ void ForwardList<T>::reverse() {
     } else if (size() == 1) {
         cout << "Cannot reverse. There's only one element." << endl;
     } else {
-        auto temp = this->head;
-        while (temp != nullptr) {
-            push_front(temp->data);
-            temp = temp->next;
-        }
-        int _nodes = size() / 2;
-        for (int i = 0; i < _nodes; ++i) {
-            pop_back();
-        }
+        this->head->reverse_next();
+        this->head->next = nullptr;
+        auto temp = this->head;      
+        this->head = this->tail;
+        this->tail = temp;
+        temp = nullptr;
+        delete temp;
     }
 }
 
@@ -192,9 +210,8 @@ template <typename T>
 ForwardIterator<T> ForwardList<T>::begin() {
     if(!this->head) {
         throw out_of_range("There's no begin. Empty forward list.");
-    } else {
-        auto begin = ForwardIterator<T>(this->head);
-        return begin;
+    } else { 
+        return ForwardIterator<T>(this->head);
     }
 }
 
@@ -203,8 +220,7 @@ ForwardIterator<T> ForwardList<T>::end() {
     if (!this->tail) {
         throw out_of_range("There's no begin. Empty forward list.");
     } else {
-        auto end = ForwardIterator<T>(this->tail); // (this->tail->next)
-        return end;
+        return ForwardIterator<T>(this->tail->next);
     }
 }
 
@@ -215,17 +231,12 @@ string ForwardList<T>::name() {
 
 template <typename T>
 void ForwardList<T>::merge(ForwardList<T>& new_forward_list) {
-    if (empty() || new_forward_list.empty()) {
-        cout << "Cannot merge." << endl;
-    } else {
-        auto temp = new_forward_list.head();
-        while (temp != nullptr) {
-            push_back(temp->data);
-            temp = temp->next;
-        }
-        new_forward_list.clear();
-        //delete new_forward_list;
+    auto temp = new_forward_list.head;
+    while (temp != nullptr) {
+        push_back(temp->data);
+        temp = temp->next;
     }
+    new_forward_list.clear();
 }
 
 #endif
