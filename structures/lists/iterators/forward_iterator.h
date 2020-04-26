@@ -29,7 +29,7 @@ template <typename T>
 ForwardIterator<T>::ForwardIterator() : current(nullptr) {}
 
 template <typename T>
-ForwardIterator<T>::ForwardIterator(Node<T>* head) : current(head) {}
+ForwardIterator<T>::ForwardIterator(Node<T>* node) : current(node) {}
 
 template <typename T>
 ForwardIterator<T> ForwardIterator<T>::operator=(ForwardIterator<T> it2) {
