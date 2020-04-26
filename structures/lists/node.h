@@ -7,11 +7,17 @@ struct Node {
     Node<T>* next;
     Node<T>* prev;
 
+    Node();
     Node(T data);
     void killSelf();
     void reverse_next();
     void reverse_prev();
 };
+
+template <typename T>
+Node<T>::Node() {
+    this->next = this->prev = nullptr;
+}
 
 template <typename T>
 Node<T>::Node(T data) {
