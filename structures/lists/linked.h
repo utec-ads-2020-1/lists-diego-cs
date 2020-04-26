@@ -89,7 +89,6 @@ void LinkedList<T>::push_front(T data) {
 template <typename T>
 void LinkedList<T>::push_back(T data) {
     auto new_node = new Node<T>(data);
-    //sentinel = new Node<T>();
     new_node->next = sentinel;
     sentinel->prev = new_node;
     if (!this->tail) {
@@ -112,7 +111,6 @@ void LinkedList<T>::pop_front() {
             this->head = this->tail = nullptr;
             sentinel->prev = nullptr;
             delete temp;
-            delete sentinel;
         } else {
             this->head = this->head->next;
             this->head->prev = nullptr;
@@ -132,7 +130,6 @@ void LinkedList<T>::pop_back() {
             this->tail = this->head = nullptr;
             sentinel->prev = nullptr;
             delete temp;
-            delete sentinel;
         } else {
             this->tail = this->tail->prev;
             this->tail->next = sentinel;
