@@ -32,4 +32,10 @@ class List {
         virtual std::string name() = 0;
 };
 
+template <typename T>
+List<T>::~List() {
+    delete head;
+    delete tail;
+}
+
 #endif
