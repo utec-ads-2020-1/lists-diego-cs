@@ -8,7 +8,8 @@
 template <typename T>
 class LinkedList : public List<T> {
     public:
-        LinkedList() : List<T>() {}
+        LinkedList();
+        ~LinkedList();
 
         T front();
         T back();
@@ -26,9 +27,7 @@ class LinkedList : public List<T> {
         BidirectionalIterator<T> begin();
 	    BidirectionalIterator<T> end();
 
-        string name() {
-            return "Linked List";
-        }
+        string name();
 
         /**
          * Merges x into the list by transferring all of its elements at their respective 
@@ -42,5 +41,206 @@ class LinkedList : public List<T> {
         */
         void merge(LinkedList<T>&);
 };
+
+template <typename T>
+LinkedList<T>::LinkedList() : List<T>() {}
+
+template <typename T>
+LinkedList<T>::~LinkedList() {
+    //
+    //
+    //
+}
+
+template <typename T>
+T LinkedList<T>::front() {
+    if (!this->head) {
+        throw out_of_range("Empty " + name());
+    } else {
+        return this->head->data;
+    }
+}
+
+template <typename T>
+T LinkedList<T>::back() {
+    if (!this->tail) {
+        throw out_of_range("Empty " + name());
+    } else {
+        return this->tail->data;
+    }
+}
+
+template <typename T>
+void LinkedList<T>::push_front(T data) {
+    auto new_node = new Node<T>(data);
+    if (!this->head) {
+        this->head = this->tail = new_node;
+    } else {
+        new_node->next = this->head;
+        this->head->prev = new_node;
+        this->head = new_node;
+    }
+    ++this->nodes;
+}
+
+template <typename T>
+void LinkedList<T>::push_back(T data) {
+    auto new_node = new Node<T>(data);
+    if (!this->tail) {
+        this->head = this->tail = new_node;
+    } else {
+        new_node->prev = this->tail;
+        this->tail->next = new_node;
+        this->tail = new_node;
+    }
+    ++this->nodes;
+}
+
+template <typename T>
+void LinkedList<T>::pop_front() {
+    if (!this->head) {
+        cout << "Cannot pop front. Empty " << name() << endl;
+    } else {
+        auto temp = this->head;
+        if (this->nodes == 1) {
+            this->head = this->tail = nullptr;
+            delete temp;
+        } else {
+            this->head = this->head->next;
+            this->head->prev = nullptr;
+            delete temp;
+        }
+        --this->nodes;
+    }
+}
+
+template <typename T>
+void LinkedList<T>::pop_back() {
+    if (!this->tail) {
+        cout << "Cannot pop back. Empty " << name() << endl;
+    } else {
+        auto temp = this->tail;
+        if (this->nodes == 1) {
+            this->tail = this->head = nullptr;
+            delete temp;
+        } else {
+            this->tail = this->tail->prev;
+            this->tail->next = nullptr;
+            delete temp;
+        }
+        --this->nodes;
+    }
+}
+
+template <typename T>
+T LinkedList<T>::operator[](int index) {
+    if (index < 0 || index >= this->nodes) {
+        throw out_of_range("Invalid index");
+    } else {
+        if (index == this->nodes - 1) {
+            return this->tail->data;
+        } else {
+            auto temp = this->head;
+            for (int i = 0; i < index; ++i) {
+                temp = temp->next;
+            }
+            return temp->data;
+        }
+    }
+}
+
+template <typename T>
+bool LinkedList<T>::empty() {
+    return !this->head;
+}
+
+template <typename T>
+int LinkedList<T>::size() {
+    return this->nodes;
+}
+
+template <typename T>
+void LinkedList<T>::clear() {
+    if (empty()) {
+        cout <<  "Linked List is already empty." << endl;
+    } else {
+        this->head->killSelf();
+        this->head = this->tail = nullptr;
+        this->nodes = 0;
+    }
+}
+
+template <typename T>
+void LinkedList<T>::sort() {
+    if (empty()) {
+        cout << "Cannot sort. Empty " << name() << endl;
+    } else if (size() == 1) {
+        cout << "Cannot sort. There's only one element." << endl;
+    } else {
+        merge_sort(this->head);
+        this->tail = this->head;
+        while(this->tail->next != nullptr) {
+            this->tail = this->tail->next;
+        }
+    }
+}
+
+template <typename T>
+void LinkedList<T>::reverse() {
+    if (empty()) {
+        cout << "Cannot reverse. Empty " << name() << endl;
+    } else if (size() == 1) {
+        cout << "Cannot reverse. There's only one element." << endl;
+    } else {
+        this->head->reverse_next();
+        this->tail->reverse_prev();
+        auto temp = this->head;
+        this->head = this->tail;
+        this->tail = temp;
+        this->head->prev = nullptr;
+        this->tail->next = nullptr;
+        temp = nullptr;
+        delete temp;
+    }
+}
+
+template <typename T>
+BidirectionalIterator<T> LinkedList<T>::begin() {
+    if (!this->head) {
+        throw out_of_range("There's no begin. Empty " + name());
+    } else {
+        return BidirectionalIterator<T>(this->head);
+    }
+}
+
+template <typename T>
+BidirectionalIterator<T> LinkedList<T>::end() {
+    if (!this->tail) {
+        throw out_of_range("There's no end. Empty " + name());
+    } else {
+        return BidirectionalIterator<T>(this->tail->next);
+    }
+}
+
+template <typename T>
+string LinkedList<T>::name() {
+    return "Linked List.";
+}
+
+template <typename T>
+void LinkedList<T>::merge(LinkedList<T>& new_llist) {
+    if (!this->head) {
+        this->head = new_llist.head;
+        this->tail = new_llist.tail;
+        this->nodes = new_llist.nodes;
+    } else {
+        this->tail->next = new_llist.head;
+        new_llist.head->prev = this->tail;
+        this->tail = new_llist.tail;
+        this->nodes += new_llist.nodes;
+    }
+    new_llist.head = new_llist.tail = nullptr;
+    new_llist.nodes = 0;
+}
 
 #endif
