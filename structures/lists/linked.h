@@ -7,6 +7,8 @@
 // TODO: Implement all methods
 template <typename T>
 class LinkedList : public List<T> {
+    private:
+        Node<T>* sentinel;
     public:
         LinkedList();
         ~LinkedList();
@@ -43,13 +45,12 @@ class LinkedList : public List<T> {
 };
 
 template <typename T>
-LinkedList<T>::LinkedList() : List<T>() {}
+LinkedList<T>::LinkedList() : List<T>(), sentinel(new Node<T>()) {}
 
 template <typename T>
 LinkedList<T>::~LinkedList() {
-    //
-    //
-    //
+    this->head->killSelf();
+    this->nodes = 0;
 }
 
 template <typename T>
@@ -75,6 +76,8 @@ void LinkedList<T>::push_front(T data) {
     auto new_node = new Node<T>(data);
     if (!this->head) {
         this->head = this->tail = new_node;
+        this->tail->next = sentinel;
+        sentinel->prev = this->tail;
     } else {
         new_node->next = this->head;
         this->head->prev = new_node;
@@ -86,6 +89,9 @@ void LinkedList<T>::push_front(T data) {
 template <typename T>
 void LinkedList<T>::push_back(T data) {
     auto new_node = new Node<T>(data);
+    //sentinel = new Node<T>();
+    new_node->next = sentinel;
+    sentinel->prev = new_node;
     if (!this->tail) {
         this->head = this->tail = new_node;
     } else {
@@ -102,9 +108,11 @@ void LinkedList<T>::pop_front() {
         cout << "Cannot pop front. Empty " << name() << endl;
     } else {
         auto temp = this->head;
-        if (this->nodes == 1) {
+        if (this->head == this->tail) {
             this->head = this->tail = nullptr;
+            sentinel->prev = nullptr;
             delete temp;
+            delete sentinel;
         } else {
             this->head = this->head->next;
             this->head->prev = nullptr;
@@ -120,12 +128,15 @@ void LinkedList<T>::pop_back() {
         cout << "Cannot pop back. Empty " << name() << endl;
     } else {
         auto temp = this->tail;
-        if (this->nodes == 1) {
+        if (this->head == this->tail) {
             this->tail = this->head = nullptr;
+            sentinel->prev = nullptr;
             delete temp;
+            delete sentinel;
         } else {
             this->tail = this->tail->prev;
-            this->tail->next = nullptr;
+            this->tail->next = sentinel;
+            sentinel->prev = this->tail;
             delete temp;
         }
         --this->nodes;
@@ -174,31 +185,41 @@ template <typename T>
 void LinkedList<T>::sort() {
     if (empty()) {
         cout << "Cannot sort. Empty " << name() << endl;
-    } else if (size() == 1) {
+    } else if (this->head == this->tail) {
         cout << "Cannot sort. There's only one element." << endl;
     } else {
+        this->tail->next = nullptr; /* tail->next stop pointing to sentinel */
         merge_sort(this->head);
-        this->tail = this->head;
-        while(this->tail->next != nullptr) {
-            this->tail = this->tail->next;
+        auto temp = this->head;
+        while(temp->next){
+            this->tail = temp->next;
+            this->tail->prev = temp;
+            temp = temp->next;
         }
-    }
+        this->head->prev = nullptr;
+        this->tail->next = sentinel;
+        this->sentinel->prev = this->tail;
+        temp = nullptr;
+        delete temp;
+    }   
 }
 
 template <typename T>
 void LinkedList<T>::reverse() {
     if (empty()) {
         cout << "Cannot reverse. Empty " << name() << endl;
-    } else if (size() == 1) {
+    } else if (this->head == this->tail) {
         cout << "Cannot reverse. There's only one element." << endl;
     } else {
         this->head->reverse_next();
-        this->tail->reverse_prev();
+        this->sentinel->reverse_prev();
         auto temp = this->head;
         this->head = this->tail;
         this->tail = temp;
         this->head->prev = nullptr;
-        this->tail->next = nullptr;
+        this->tail->next = sentinel;
+        this->sentinel->prev = this->tail;
+        this->sentinel->next = nullptr;
         temp = nullptr;
         delete temp;
     }
@@ -218,7 +239,7 @@ BidirectionalIterator<T> LinkedList<T>::end() {
     if (!this->tail) {
         throw out_of_range("There's no end. Empty " + name());
     } else {
-        return BidirectionalIterator<T>(this->tail->next);
+        return BidirectionalIterator<T>(this->sentinel);
     }
 }
 
@@ -232,14 +253,17 @@ void LinkedList<T>::merge(LinkedList<T>& new_llist) {
     if (!this->head) {
         this->head = new_llist.head;
         this->tail = new_llist.tail;
-        this->nodes = new_llist.nodes;
+        this->sentinel = new_llist.sentinel;
     } else {
         this->tail->next = new_llist.head;
         new_llist.head->prev = this->tail;
         this->tail = new_llist.tail;
-        this->nodes += new_llist.nodes;
+        auto temp = this->sentinel;
+        this->sentinel = new_llist.sentinel;
+        delete temp;
     }
-    new_llist.head = new_llist.tail = nullptr;
+    this->nodes += new_llist.nodes;
+    new_llist.head = new_llist.tail = new_llist.sentinel = nullptr;
     new_llist.nodes = 0;
 }
 
