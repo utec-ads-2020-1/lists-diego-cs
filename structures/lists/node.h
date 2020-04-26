@@ -10,6 +10,7 @@ struct Node {
     Node(T data);
     void killSelf();
     void reverse_next();
+    void reverse_prev();
 };
 
 template <typename T>
@@ -32,6 +33,14 @@ void Node<T>::reverse_next() {
         this->next->reverse_next();
     }
     this->next->next = this;
+}
+
+template <typename T>
+void Node<T>::reverse_prev() {
+    if (this->prev->prev) {
+        this->prev->reverse_prev();
+    }
+    this->prev->prev = this;
 }
 
 #endif
