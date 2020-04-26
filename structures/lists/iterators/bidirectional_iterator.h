@@ -24,4 +24,50 @@ class BidirectionalIterator {
         T operator*();
 };
 
+template <typename T>
+BidirectionalIterator<T>::BidirectionalIterator() : current(nullptr) {}
+
+template <typename T>
+BidirectionalIterator<T>::BidirectionalIterator(Node<T>* node) : current(node) {}
+
+template <typename T>
+BidirectionalIterator<T> BidirectionalIterator<T>::operator=(BidirectionalIterator<T> it2) {
+    this->current = it2.current;
+    return *this;
+}
+
+template <typename T>
+bool BidirectionalIterator<T>::operator!=(BidirectionalIterator<T> it2) {
+    return this->current != it2.current;
+}
+
+template <typename T>
+BidirectionalIterator<T> BidirectionalIterator<T>::operator++() {
+    if (!this->current) {
+        throw out_of_range("Iterator is pointing to null.");
+    } else {
+        this->current = this->current->next;
+        return *this;
+    }
+}
+
+template <typename T>
+BidirectionalIterator<T> BidirectionalIterator<T>::operator--() {
+    if (!this->current) {
+        throw out_of_range("Iterator is pointing to null.");
+    } else {
+        this->current = this->current->prev;
+        return *this;
+    }
+}
+
+template <typename T>
+T BidirectionalIterator<T>::operator*() {
+    if (!this->current) {
+        throw out_of_range("Iterator is pointing to null.");
+    } else {
+        return this->current->data;
+    }
+}
+
 #endif
