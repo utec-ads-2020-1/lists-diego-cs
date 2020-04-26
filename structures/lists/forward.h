@@ -47,10 +47,8 @@ ForwardList<T>::ForwardList() : List<T>() {}
 
 template <typename T>
 ForwardList<T>::~ForwardList() {
-    //this->head->killSelf();
-    //this->nodes = 0;
-    //delete this->head;
-    //delete this->tail;
+    this->head->killSelf();
+    this->nodes = 0;
 }
 
 template <typename T>
@@ -101,7 +99,7 @@ void ForwardList<T>::pop_front() {
         cout << "Cannot pop front. Empty " << name() << endl;
     } else {
         auto temp = this->head;
-        if (this->nodes == 1) {         
+        if (this->head == this->tail) {         
             this->head = this->tail = nullptr;
             delete temp;
         } else {
@@ -117,7 +115,7 @@ void ForwardList<T>::pop_back() {
     if (!this->tail) {
         cout << "Cannot pop back. Empty " << name() << endl;
     } else {
-        if (this->nodes == 1) {
+        if (this->head == this->tail) {
             auto temp = this->tail;
             this->tail = this->head = nullptr;
             delete temp;
@@ -177,12 +175,12 @@ template <typename T>
 void ForwardList<T>::sort() {
     if (empty()) {
         cout << "Cannot sort. Empty " << name() << endl;
-    } else if (size() == 1) {
+    } else if (this->head == this->tail) {
         cout << "Cannot sort. There's only one element." << endl;
     } else {
         merge_sort(this->head);
         this->tail = this->head;
-        while(this->tail->next != nullptr) {
+        while(this->tail->next) {
             this->tail = this->tail->next;
         }
     }
@@ -192,7 +190,7 @@ template <typename T>
 void ForwardList<T>::reverse() {
     if (empty()) {
         cout << "Cannot reverse. Empty " << name() << endl;
-    } else if (size() == 1) {
+    } else if (this->head == this->tail) {
         cout << "Cannot reverse. There's only one element." << endl;
     } else {
         this->head->reverse_next();
