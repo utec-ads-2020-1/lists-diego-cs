@@ -140,7 +140,9 @@ void LinkedList<T>::pop_back() {
 
 template <typename T>
 T LinkedList<T>::operator[](int index) {
-    if (index < 0 || index >= this->nodes) {
+    if (!this->head) {
+        throw out_of_range("Empty " + name());
+    } else if (index < 0 || index >= this->nodes) {
         throw out_of_range("Invalid index");
     } else {
         if (index == this->nodes - 1) {
