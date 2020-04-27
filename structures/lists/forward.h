@@ -101,11 +101,10 @@ void ForwardList<T>::pop_front() {
         auto temp = this->head;
         if (this->head == this->tail) {         
             this->head = this->tail = nullptr;
-            delete temp;
         } else {
-            this->head = this->head->next;
-            delete temp;    
+            this->head = this->head->next;   
         }
+        delete temp;
         --this->nodes;
     }
 }
@@ -118,7 +117,7 @@ void ForwardList<T>::pop_back() {
         if (this->head == this->tail) {
             auto temp = this->tail;
             this->tail = this->head = nullptr;
-            delete temp;
+            delete temp; 
         } else {
             auto temp = this->head;
             while (temp->next != this->tail) {
@@ -128,7 +127,7 @@ void ForwardList<T>::pop_back() {
             this->tail = temp;
             temp = temp->next;
             delete temp;
-        }
+        }      
         --this->nodes;
     } 
 }
