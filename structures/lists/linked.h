@@ -110,12 +110,11 @@ void LinkedList<T>::pop_front() {
         if (this->head == this->tail) {
             this->head = this->tail = nullptr;
             sentinel->prev = nullptr;
-            delete temp;
         } else {
             this->head = this->head->next;
-            this->head->prev = nullptr;
-            delete temp;
+            this->head->prev = nullptr;     
         }
+        delete temp;
         --this->nodes;
     }
 }
@@ -129,13 +128,12 @@ void LinkedList<T>::pop_back() {
         if (this->head == this->tail) {
             this->tail = this->head = nullptr;
             sentinel->prev = nullptr;
-            delete temp;
         } else {
             this->tail = this->tail->prev;
             this->tail->next = sentinel;
-            sentinel->prev = this->tail;
-            delete temp;
+            sentinel->prev = this->tail;         
         }
+        delete temp;
         --this->nodes;
     }
 }
